@@ -233,6 +233,7 @@ class FastRCNNOutputLayers(nn.Module):
         self.num_classes = num_classes
         input_size = input_shape.channels * (input_shape.width or 1) * (input_shape.height or 1)
         # prediction layer for num_classes foreground classes and one background class (hence + 1)
+        # -EREN- CLASSIFICATION HEADS
         self.cls_score = nn.Linear(input_size, num_classes + 1)
         num_bbox_reg_classes = 1 if cls_agnostic_bbox_reg else num_classes
         box_dim = len(box2box_transform.weights)
@@ -341,6 +342,7 @@ class FastRCNNOutputLayers(nn.Module):
         if self.use_sigmoid_ce:
             loss_cls = self.sigmoid_cross_entropy_loss(scores, gt_classes)
         else:
+            # -EREN- cross entropy loss w/o flashy implementation of sigmoid cross entropy
             loss_cls = cross_entropy(scores, gt_classes, reduction="mean")
 
         losses = {
